@@ -1,0 +1,106 @@
+﻿@{
+    ViewData["Title"] = "Upload Profile Image";
+    var userName = Context.Session.GetString("UserName") ?? "User";
+    var profileImage = Context.Session.GetString("ProfileImagePath");
+    var imageSrc = !string.IsNullOrEmpty(profileImage)
+        ? profileImage
+        : "/images/profiles/user-icon.png"; // fallback image
+}
+
+<!-- Cropper CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet" />
+
+<div class="container mt-5 text-center">
+    <h2 class="mb-4"><i class="fas fa-camera me-2"></i>Upload Profile Picture</h2>
+
+    <!-- 🖼️ Image Preview (before crop) -->
+    <div class="mb-3">
+        <img id="previewImage"
+             src="@imageSrc"
+             alt="Profile"
+             class="rounded-circle border border-3 shadow-sm"
+             width="200" height="200"
+             style="object-fit: cover;" />
+    </div>
+
+    <h5 class="mb-4">Welcome, @userName</h5>
+
+    <!-- 📤 Image Upload and Crop Form -->
+    <form id="uploadForm"
+          method="post"
+          enctype="multipart/form-data"
+          class="d-inline-block w-100"
+          style="max-width: 400px;">
+        <div class="mb-3">
+            <input type="file"
+                   id="imageInput"
+                   name="imageFile"
+                   accept="image/*"
+                   class="form-control form-control-sm"
+                   required />
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="cropAndUpload()">Crop & Upload</button>
+        <a href="/User/Dashboard" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div>
+
+<!-- CropperJS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+@section Scripts {
+    <script>
+        let cropper;
+        const imageInput = document.getElementById('imageInput');
+        const previewImage = document.getElementById('previewImage');
+
+        imageInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                previewImage.src = event.target.result;
+
+                if (cropper) cropper.destroy(); // destroy previous cropper
+                cropper = new Cropper(previewImage, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    zoomable: true,
+                    scalable: true,
+                    movable: true,
+                    cropBoxResizable: true
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function cropAndUpload() {
+            if (!cropper) {
+                alert("Please select and crop an image.");
+                return;
+            }
+
+            cropper.getCroppedCanvas({
+                width: 300,
+                height: 300,
+                imageSmoothingQuality: 'high'
+            }).toBlob(function (blob) {
+                const formData = new FormData();
+                formData.append('imageFile', blob, 'profile.jpg');
+
+                fetch('/User/UploadProfileImage', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else {
+                        alert("Upload failed.");
+                    }
+                });
+            });
+        }
+    </script>
+}

@@ -1,0 +1,128 @@
+﻿
+
+
+
+
+
+
+@model List<blogapp.Models.BlogPost>
+@{
+    ViewData["Title"] = "My Blog Posts";
+    var bookmarkedIds = ViewBag.BookmarkedIds as List<int> ?? new List<int>();
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4"><i class="fas fa-user me-2"></i>@ViewData["Title"]</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <p class="mb-0 text-muted">
+                You haven't posted any blogs yet.
+                <a href="/BlogPost/Create" class="fw-semibold">Write one now</a>.
+            </p>
+        </div>
+    }
+    else
+    {
+        foreach (var post in Model)
+        {
+            var isBookmarked = bookmarkedIds.Contains(post.Id);
+
+            <div class="card mb-3 shadow-sm p-2 small-post" style="cursor: pointer;" onclick="location.href='/BlogPost/Details/@post.Id'">
+                <div class="row g-0 align-items-center">
+                    <!-- 📷 Image -->
+                    <div class="col-md-2">
+                        <img src="@(!string.IsNullOrEmpty(post.ImagePath) ? post.ImagePath : "/images/placeholder.png")"
+                             class="img-fluid rounded-start"
+                             alt="Blog Image"
+                             style="height: 90px; width: 100%; object-fit: cover;" />
+                    </div>
+
+                    <!-- 📄 Blog Content -->
+                    <div class="col-md-7">
+                        <div class="card-body py-2">
+                            <h5 class="card-title mb-1 text-primary">@post.Title</h5>
+                             @* <p class="card-text text-muted small">
+                             //     @((post.Content?.Length > 100) ? post.Content.Substring(0, 100) + "..." : post.Content)
+                             // </p>*@
+                            <small class="text-muted d-block">
+                                <i class="far fa-calendar-alt me-1"></i>
+                                @post.CreatedAt.ToString("dd MMM yyyy")
+                            </small>
+                            <small class="text-muted">
+                                💬 @(post.Comments?.Count ?? 0) comments
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- 🔘 Actions -->
+                    <div class="col-md-3 text-end pe-3">
+                        <div class="d-flex justify-content-end align-items-center gap-2">
+
+                            <!-- 👍 Like -->
+                           
+                            <div class="d-flex align-items-center gap-2">
+                                <form asp-action="Like" asp-controller="BlogPost" method="post"
+                                      asp-route-id="@post.Id" onsubmit="return stopClick(event)">
+                                    <button type="submit" class="btn btn-outline-primary btn-sm" title="Like this post">
+                                        👍
+                                    </button>
+                                </form>
+                                <span class="small text-muted">
+                                    @(post.Likes != null ? post.Likes.Count : 0) Likes
+                                </span>
+                            </div>
+
+                            <!-- 🔖 Bookmark -->
+                            <form asp-action="ToggleBookmark" asp-controller="User" method="post"
+                                  asp-route-id="@post.Id" onsubmit="return stopClick(event)">
+                                <button type="submit"
+                                        class="btn btn-sm @(isBookmarked ? "btn-warning" : "btn-outline-secondary")"
+                                        title="@(isBookmarked ? "Remove Bookmark" : "Bookmark this post")">
+                                    🔖
+                                </button>
+                            </form>
+
+                            <!-- ✏️ Edit -->
+                            <a asp-controller="User" asp-action="Edit" asp-route-id="@post.Id" class="btn btn-sm btn-success" onclick="event.stopPropagation();">✏️</a>
+
+                            <!-- 🗑️ Delete -->
+                            <form asp-action="Delete" asp-controller="User" method="post"
+                                  class="d-inline" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                                <input type="hidden" name="id" value="@post.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="event.stopPropagation();">🗑️</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    <a href="/Home/Index" class="btn btn-secondary mt-4">
+        <i class="fas fa-home me-1"></i>Back to Home
+    </a>
+</div>
+
+@section Scripts {
+    <script>
+        function stopClick(event) {
+            event.stopPropagation();
+            return true;
+        }
+
+        // Show temporary like/bookmark message
+        @if (TempData["LikeMessage"] != null || TempData["BookmarkMessage"] != null)
+        {
+                <text>
+                    const msg = document.createElement('div');
+                    msg.innerText = "@(TempData["LikeMessage"] ?? TempData["BookmarkMessage"])";
+                    msg.className = "alert alert-info position-fixed top-0 start-50 translate-middle-x mt-3";
+                    msg.style.zIndex = 9999;
+                    document.body.appendChild(msg);
+                    setTimeout(() => msg.remove(), 3000);
+                </text>
+        }
+    </script>
+}

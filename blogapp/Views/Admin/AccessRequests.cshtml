@@ -1,0 +1,22 @@
+﻿@model List<blogapp.Models.User>
+
+<h3>Access Requests</h3>
+
+<table>
+    <tr><th>Email</th><th>Status</th><th>Action</th></tr>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>@user.Email</td>
+            <td>@user.BlogAccessStatus</td>
+            <td>
+                <form method="post" asp-action="ApproveRequest" asp-route-id="@user.Id">
+                    <button type="submit">Approve</button>
+                </form>
+                <form method="post" asp-action="RejectRequest" asp-route-id="@user.Id">
+                    <button type="submit">Reject</button>
+                </form>
+            </td>
+        </tr>
+    }
+</table>

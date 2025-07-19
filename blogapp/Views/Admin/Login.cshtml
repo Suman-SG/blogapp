@@ -1,0 +1,145 @@
+﻿@* @{
+    ViewData["Title"] = "Admin Login";
+}
+<h2>🔐 Admin Access</h2>
+<form method="post" class="w-50 mx-auto mt-4">
+    <div class="mb-3">
+        <label>Enter Admin Password</label>
+        <input type="password" name="password" class="form-control" required />
+    </div>
+    <button class="btn btn-primary">Enter</button>
+    <p class="text-danger mt-2">@ViewBag.Message</p>
+</form> 
+
+ *@
+
+
+
+
+
+
+
+
+@* 
+@{
+    ViewData["Title"] = "Admin Login";
+}
+
+<h2 class="text-center mt-4">🔐 Admin Login</h2>
+
+<form method="post" class="w-50 mx-auto mt-4">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label for="username">Username</label>
+        <input name="username" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label for="password">Password</label>
+        <input type="password" name="password" class="form-control" required />
+    </div>
+
+    <button class="btn btn-primary w-100">Login</button>
+    
+    
+
+    @if (ViewBag.Message != null)
+    {
+        <p class="text-danger text-center mt-2">@ViewBag.Message</p>
+    }
+</form>
+
+<a href="/Home/Landing" class="btn btn-primary btn-lg">
+    <i class="fas fa-sign-in-alt me-2"></i>return to home page
+</a>
+ *@
+
+
+@* 
+@{
+    ViewData["Title"] = "Admin Login";
+}
+
+<script src="https://www.google.com/recaptcha/api.js?render=6LdvcIgrAAAAAFsSDAn2eilaxfqi2rVy-037WUFE"></script>
+
+
+
+<h2 class="text-center mt-4">🔐 Admin Login</h2>
+
+<form method="post" class="w-50 mx-auto mt-4">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label for="username">Username</label>
+        <input name="username" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="password">Password</label>
+        <input type="password" name="password" class="form-control" required />
+    </div>
+
+    <!-- ✅ Google reCAPTCHA -->
+    <div class="g-recaptcha" data-sitekey="6LdvcIgrAAAAAFsSDAn2eilaxfqi2rVy-037WUFE"></div>
+    <button class="btn btn-primary w-100">Login</button>
+
+    @if (ViewBag.Message != null)
+    {
+        <p class="text-danger text-center mt-3">@ViewBag.Message</p>
+    }
+</form>
+
+<div class="text-center mt-3">
+   
+    <a href="/Home/Landing" class="btn btn-secondary ms-2">
+        <i class="fas fa-home me-1"></i>Return to Home
+    </a>
+</div>
+
+<!-- Load reCAPTCHA v3 -->
+<!-- Your login form -->
+
+<script>
+    grecaptcha.ready(function () {
+        grecaptcha.execute('6LdvcIgrAAAAAFsSDAn2eilaxfqi2rVy-037WUFE', { action: 'admin_login' }).then(function (token) {
+            document.getElementById('g-recaptcha-token').value = token;
+        });
+    });
+</script>
+ *@
+
+
+
+<script src="https://www.google.com/recaptcha/api.js?render=6LdvcIgrAAAAAFsSDAn2eilaxfqi2rVy-037WUFE"></script>
+<script>
+    grecaptcha.ready(function () {
+        grecaptcha.execute('6LdvcIgrAAAAAFsSDAn2eilaxfqi2rVy-037WUFE', { action: 'admin_login' }).then(function (token) {
+            document.getElementById('g-recaptcha-token').value = token;
+        });
+    });
+</script>
+
+<form method="post" asp-controller="Admin" asp-action="Login">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label>Username</label>
+        <input type="text" name="username" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label>Password</label>
+        <input type="password" name="password" class="form-control" required />
+    </div>
+
+    <input type="hidden" id="g-recaptcha-token" name="g-recaptcha-response" />
+
+    <button type="submit" class="btn btn-primary">Login</button>
+    <p class="text-danger mt-2">@ViewBag.Message</p>
+</form>
+
+<div class="text-center mt-3">
+
+    <a href="/Home/Landing" class="btn btn-secondary ms-2">
+        <i class="fas fa-home me-1"></i>Return to Home
+    </a>
+</div>

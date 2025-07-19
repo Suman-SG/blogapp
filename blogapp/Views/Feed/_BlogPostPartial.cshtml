@@ -1,0 +1,18 @@
+﻿@model List<blogapp.Models.BlogPost>
+
+@foreach (var post in Model)
+{
+    var isBookmarked = ViewBag.BookmarkedIds != null && ((List<int>)ViewBag.BookmarkedIds).Contains(post.Id);
+    <div class="blog-card">
+        <h4>@post.Title</h4>
+        <p>@post.Content</p>
+
+        <form method="post" asp-controller="User" asp-action="ToggleBookmark" asp-route-id="@post.Id">
+            @Html.AntiForgeryToken()
+            <button type="submit" style="background:none;border:none;">
+                <i class="fas fa-bookmark"
+                   style="font-size: 20px; color: @(isBookmarked ? "#f59e0b" : "#cbd5e1")"></i>
+            </button>
+        </form>
+    </div>
+}

@@ -1,0 +1,250 @@
+﻿@* @model int
+@{
+    var postId = Model;
+    var shareUrl = Url.Action("Details", "BlogPost", new { id = postId }, Context.Request.Scheme);
+}
+
+<!-- Share Button -->
+<button class="btn btn-sm btn-outline-primary toggle-share" data-post-id="@postId" type="button">
+    <i class="fas fa-share-alt"></i>
+</button>
+
+<!-- Floating Share Box -->
+<div class="share-box" id="share-box-@postId" style="display: none; position: absolute; z-index: 999; background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 0 8px rgba(0,0,0,0.2);">
+    <button type="button" class="btn btn-sm close-share" title="Close" style="position: absolute; top: 5px; right: 5px; border: none; background: none;">
+        <i class="fas fa-times text-danger"></i>
+    </button>
+
+    <a href="https://wa.me/?text=@shareUrl" target="_blank" title="WhatsApp">
+        <i class="fab fa-whatsapp me-2"></i>
+    </a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u=@shareUrl" target="_blank" title="Facebook">
+        <i class="fab fa-facebook me-2"></i>
+    </a>
+    <a href="https://t.me/share/url?url=@shareUrl" target="_blank" title="Telegram">
+        <i class="fab fa-telegram me-2"></i>
+    </a>
+    <a href="https://twitter.com/intent/tweet?url=@shareUrl" target="_blank" title="Twitter">
+        <i class="fab fa-twitter me-2"></i>
+    </a>
+    <a href="#" class="copy-link" data-copy="@shareUrl" title="Copy Link">
+        <i class="fas fa-link me-2"></i>
+    </a>
+</div> *@
+
+
+
+
+
+@model int
+@{
+    var postId = Model;
+    var shareUrl = Url.Action("Details", "BlogPost", new { id = postId }, Context.Request.Scheme);
+}
+
+<div class="share-container position-relative">
+    <!-- Share Button -->
+    <button class="btn btn-sm btn-outline-primary share-toggle"
+            data-post-id="@postId"
+            type="button"
+            aria-label="Share options"
+            title="Share">
+        <i class="fas fa-share-alt"></i>
+    </button>
+
+    <!-- Modern Share Popup -->
+    <div class="share-popup shadow-lg" id="share-popup-@postId" style="display: none;">
+        <div class="share-header d-flex justify-content-between align-items-center p-2">
+            <h6 class="mb-0">Share this post</h6>
+            <button type="button" class="btn-close share-close" aria-label="Close"></button>
+        </div>
+
+        <div class="share-platforms p-3">
+            <a href="https://www.facebook.com/sharer/sharer.php?u=@shareUrl"
+               target="_blank"
+               class="share-platform"
+               title="Share on Facebook">
+                <div class="platform-icon facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </div>
+                <span>Facebook</span>
+            </a>
+
+            <a href="https://twitter.com/intent/tweet?url=@shareUrl"
+               target="_blank"
+               class="share-platform"
+               title="Share on Twitter">
+                <div class="platform-icon twitter">
+                    <i class="fab fa-twitter"></i>
+                </div>
+                <span>Twitter</span>
+            </a>
+
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url=@shareUrl"
+               target="_blank"
+               class="share-platform"
+               title="Share on LinkedIn">
+                <div class="platform-icon linkedin">
+                    <i class="fab fa-linkedin-in"></i>
+                </div>
+                <span>LinkedIn</span>
+            </a>
+
+            <a href="https://wa.me/?text=@shareUrl"
+               target="_blank"
+               class="share-platform"
+               title="Share on WhatsApp">
+                <div class="platform-icon whatsapp">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <span>WhatsApp</span>
+            </a>
+
+            <button class="share-platform copy-link"
+                    data-url="@shareUrl"
+                    title="Copy link">
+                <div class="platform-icon link">
+                    <i class="fas fa-link"></i>
+                </div>
+                <span>Copy Link</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .share-popup {
+        position: absolute;
+        bottom: 100%;
+        right: 0;
+        width: 220px;
+        background: white;
+        border-radius: 8px;
+        z-index: 1000;
+        animation: fadeIn 0.2s ease-out;
+    }
+
+    .share-header {
+        border-bottom: 1px solid #eee;
+    }
+
+    .share-platforms {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .share-platform {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: #333;
+        font-size: 12px;
+        transition: transform 0.2s;
+    }
+
+        .share-platform:hover {
+            transform: translateY(-2px);
+            color: #333;
+        }
+
+    .platform-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 4px;
+    }
+
+    .facebook {
+        background: #1877f2;
+        color: white;
+    }
+
+    .twitter {
+        background: #1da1f2;
+        color: white;
+    }
+
+    .linkedin {
+        background: #0a66c2;
+        color: white;
+    }
+
+    .whatsapp {
+        background: #25d366;
+        color: white;
+    }
+
+    .link {
+        background: #f0f0f0;
+        color: #555;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(5px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle share popup
+        document.querySelectorAll('.share-toggle').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const postId = this.getAttribute('data-post-id');
+                const popup = document.getElementById(`share-popup-${postId}`);
+
+                // Close all other popups
+                document.querySelectorAll('.share-popup').forEach(p => {
+                    if (p !== popup) p.style.display = 'none';
+                });
+
+                // Toggle current popup
+                popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+            });
+        });
+
+        // Close button
+        document.querySelectorAll('.share-close').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.closest('.share-popup').style.display = 'none';
+            });
+        });
+
+        // Close when clicking outside
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.share-popup').forEach(popup => {
+                popup.style.display = 'none';
+            });
+        });
+
+        // Copy link functionality
+        document.querySelectorAll('.copy-link').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.getAttribute('data-url');
+                navigator.clipboard.writeText(url).then(() => {
+                    // Show feedback
+                    const originalText = this.querySelector('span').textContent;
+                    this.querySelector('span').textContent = 'Copied!';
+                    setTimeout(() => {
+                        this.querySelector('span').textContent = originalText;
+                    }, 2000);
+                });
+            });
+        });
+    });
+</script>

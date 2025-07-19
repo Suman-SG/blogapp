@@ -1,0 +1,367 @@
+﻿@model blogapp.Models.BlogPost
+
+@{
+    ViewData["Title"] = "Create New Blog";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- TinyMCE CDN (Rich Text Editor) -->
+<script src="https://cdn.tiny.cloud/1/922n6cw8calj0qomh8h3si5c8v0yzlw0tnxyef0cw70x3voy/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    tinymce.init({
+        selector: 'textarea#contentEditor',
+        menubar: false,
+        plugins: 'link image lists code preview',
+        toolbar: 'undo redo | bold italic underline | bullist numlist | link image | code preview',
+        height: 300
+    });
+</script>
+
+<!-- Preview Scripts -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const imageInput = document.querySelector('input[name="imageFile"]');
+        const videoInput = document.querySelector('input[name="videoFile"]');
+        const preview = document.getElementById('preview');
+        const videoPreview = document.getElementById('videoPreview');
+
+        imageInput?.addEventListener('change', function () {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(imageInput.files[0]);
+        });
+
+        videoInput?.addEventListener('change', function () {
+            const file = videoInput.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                videoPreview.src = url;
+                videoPreview.style.display = 'block';
+            }
+        });
+    });
+</script>
+
+<!-- Styling -->
+<style>
+    #preview, #videoPreview {
+        display: none;
+        max-width: 100%;
+        margin-top: 10px;
+        border-radius: 8px;
+    }
+
+    .create-container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .create-title {
+        font-weight: bold;
+        background: linear-gradient(135deg, #153a7e, #0f0141);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 2rem;
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        transition: border 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+        }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #3498db, #2e2ecc);
+        border: none;
+        color: white;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 10px 24px;
+    }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #2e2ecc, #153a7e);
+        }
+
+    .btn-cancel {
+        margin-left: 10px;
+        border-radius: 10px;
+    }
+
+    #preview, #videoPreview {
+        display: none;
+        max-width: 100%;
+        margin-top: 10px;
+        border-radius: 8px;
+    }
+
+    @@keyframes fadeIn {
+        0%
+
+    {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    }
+</style>
+<!-- Main Form Content -->
+<div class="create-container">
+    <h2 class="create-title">📝 Create a New Blog Post</h2>
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <form asp-action="Create" enctype="multipart/form-data" method="post">
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label">Title</label>
+            <input asp-for="Title" class="form-control" placeholder="Enter blog title" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Content" class="form-label">Content</label>
+            <textarea asp-for="Content" id="contentEditor" class="form-control" placeholder="Write your blog content..."></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Tags" class="form-label">Tags (comma separated)</label>
+            <input asp-for="Tags" class="form-control" placeholder="e.g. tech, travel, lifestyle" />
+            <span asp-validation-for="Tags" class="text-danger"></span>
+        </div>
+
+        <div class="mb-4">
+            <label for="imageFile" class="form-label">Upload Image</label>
+            <input type="file" name="imageFile" class="form-control" accept="image/*" />
+            <img id="preview" />
+
+            <label for="videoFile" class="form-label mt-3">Upload Video (optional)</label>
+            <input type="file" name="videoFile" class="form-control" accept="video/*" />
+            <video id="videoPreview" controls></video>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Tags" class="form-label">Tags (comma separated)</label>
+            <input asp-for="Tags" class="form-control" placeholder="e.g. tech, travel, news" />
+            <span asp-validation-for="Tags" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Category" class="form-label">Category</label>
+            <select asp-for="Category" class="form-select">
+                <option value="">-- Select Category --</option>
+                <option>Technology</option>
+                <option>Travel</option>
+                <option>Sports</option>
+                <option>Education</option>
+                <option>Movies</option>
+                <option>Cooking</option>
+                <option>WildLife</option>
+                <option>Opinion</option>
+                <option>DailyLife</option>
+                <option>Other</option>
+
+                
+            </select>
+            <span asp-validation-for="Category" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-submit">✅ Publish</button>
+        <a href="/Home/Index" class="btn btn-secondary btn-cancel">🏠 Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} 
+
+ 
+
+@* 
+
+@model blogapp.Models.BlogPost
+
+@{
+    ViewData["Title"] = "Create New Blog";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- TinyMCE Editor -->
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    tinymce.init({
+        selector: 'textarea#contentEditor',
+        menubar: false,
+        plugins: 'link image lists code preview',
+        toolbar: 'undo redo | bold italic underline | bullist numlist | link image | code preview',
+        height: 300
+    });
+</script>
+
+<!-- File Preview -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const imageInput = document.querySelector('#imageFile');
+        const videoInput = document.querySelector('#videoFile');
+        const imagePreview = document.getElementById('preview');
+        const videoPreview = document.getElementById('videoPreview');
+
+        imageInput?.addEventListener('change', function () {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(imageInput.files[0]);
+        });
+
+        videoInput?.addEventListener('change', function () {
+            const file = videoInput.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                videoPreview.src = url;
+                videoPreview.style.display = 'block';
+            }
+        });
+    });
+</script>
+
+<!-- CSS -->
+<style>
+    .create-container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .create-title {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 25px;
+        text-align: center;
+        color: #153a7e;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 1px solid #ccc;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 6px rgba(52, 152, 219, 0.4);
+        }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #3498db, #2e2ecc);
+        color: white;
+        font-weight: 600;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+    }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #2e2ecc, #153a7e);
+        }
+
+    #preview, #videoPreview {
+        display: none;
+        max-width: 100%;
+        margin-top: 10px;
+        border-radius: 10px;
+    }
+</style>
+
+<!-- Main Form -->
+<div class="create-container">
+    <h2 class="create-title">📝 Create New Blog Post</h2>
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label">Title</label>
+            <input asp-for="Title" class="form-control" placeholder="Enter blog title" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Content" class="form-label">Content</label>
+            <textarea asp-for="Content" id="contentEditor" class="form-control" placeholder="Write your blog content..."></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Tags" class="form-label">Tags (comma separated)</label>
+            <input asp-for="Tags" class="form-control" placeholder="e.g. tech, travel, news" />
+            <span asp-validation-for="Tags" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Category" class="form-label">Category</label>
+            <select asp-for="Category" class="form-select">
+                <option value="">-- Select Category --</option>
+                <option>Technology</option>
+                <option>Travel</option>
+                <option>Sports</option>
+                <option>Education</option>
+                <option>Movies</option>
+                <option>News</option>
+            </select>
+            <span asp-validation-for="Category" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Upload Image</label>
+            <input asp-for="imageFile" class="form-control" type="file" id="imageFile" accept="image/*" />
+            <img id="preview" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Upload Video (optional)</label>
+            <input asp-for="videoFile" class="form-control" type="file" id="videoFile" accept="video/*" />
+            <video id="videoPreview" controls></video>
+        </div>
+
+        <button type="submit" class="btn btn-submit">✅ Publish</button>
+        <a href="/Home/Index" class="btn btn-secondary ms-2">🏠 Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} *@

@@ -1,0 +1,469 @@
+﻿@* 
+@model IEnumerable<blogapp.Models.BlogPost>
+@{
+    ViewData["Title"] = "Welcome to BlogHub";
+    var userId = ViewBag.UserId as int?;
+    var bookmarkedIds = ViewBag.BookmarkedIds as List<int> ?? new List<int>();
+}
+
+@section Styles {
+    <style>
+        .landing-header {
+            text-align: center;
+            margin-top: 60px;
+            margin-bottom: 40px;
+        }
+
+            .landing-header h1 {
+                font-size: 3rem;
+                font-weight: 700;
+                color: #2e2ecc;
+            }
+
+            .landing-header p {
+                font-size: 1.25rem;
+                color: #555;
+                margin-top: 10px;
+            }
+
+        .action-buttons {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+            .action-buttons a {
+                margin: 0 10px;
+                padding: 12px 24px;
+                font-size: 1.1rem;
+                border-radius: 30px;
+                font-weight: 500;
+                text-decoration: none;
+            }
+
+        .btn-primary {
+            background-color: #2e2ecc;
+            border-color: #2e2ecc;
+        }
+
+        .btn-outline-dark:hover {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .preview-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            margin-bottom: 25px;
+            transition: transform 0.2s ease-in-out;
+        }
+
+            .preview-card:hover {
+                transform: scale(1.01);
+            }
+
+            .preview-card img {
+                width: 100%;
+                height: 180px;
+                object-fit: cover;
+            }
+
+        .preview-body {
+            padding: 16px;
+        }
+
+        .preview-title {
+            font-size: 1.3rem;
+            color: #2e2ecc;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+            .preview-title:hover {
+                text-decoration: underline;
+            }
+
+        .preview-text {
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .preview-footer {
+            font-size: 0.85rem;
+            color: #777;
+            margin-top: 10px;
+        }
+    </style>
+}
+
+<div class="container">
+    <!-- 🚀 Hero Section -->
+    <div class="landing-header">
+        <h1>Welcome to BlogHub ✨</h1>
+        <p>Your space to read, write, and share ideas</p>
+    </div>
+
+    <!-- 🧭 Action Buttons -->
+    <div class="action-buttons">
+        <a href="/Auth/Login" class="btn btn-outline-dark">🔐 Login</a>
+        <a href="/Auth/Register" class="btn btn-outline-dark">📝 Register</a>
+        <a href="/User/Profile" class="btn btn-primary">👤 Dashboard</a>
+        <a href="/BlogPost/Create" class="btn btn-primary">✍️ Write Blog</a>
+        <a href="/BlogPost/Index" class="btn btn-secondary">🏠 Return to Main Blog Feed</a>
+        @if (userId != null)
+        {
+            <a href="/User/Bookmarks" class="btn btn-outline-dark">🔖 My Bookmarks</a>
+        }
+    </div>
+
+    <!-- 📝 Latest Blog Previews -->
+    <h4 class="mb-3">Latest Posts</h4>
+    <div class="row">
+        @foreach (var post in Model.Take(3))
+        {
+            <div class="col-md-4">
+                <div class="preview-card">
+                    <a href="/BlogPost/Details/@post.Id">
+                        @if (!string.IsNullOrEmpty(post.ImagePath))
+                        {
+                            <img src="@post.ImagePath" alt="@post.Title" />
+                        }
+                        else
+                        {
+                            <img src="/images/placeholder.png" alt="No image" />
+                        }
+                    </a>
+                    <div class="preview-body">
+                        <a class="preview-title" href="/BlogPost/Details/@post.Id">@post.Title</a>
+                        <div class="preview-text">
+                            @Html.Raw((post.Content?.Length > 100 ? post.Content.Substring(0, 100) + "..." : post.Content))
+                        </div>
+                        <div class="preview-footer">
+                            Posted on @post.CreatedAt.ToString("dd MMM yyyy")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- 🔙 Return to Main Blog Feed -->
+    <div class="text-center mt-4">
+        <a href="/BlogPost/Index" class="btn btn-secondary">🏠 Return to Main Blog Feed</a>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- ✅ TinyMCE Setup (with Cleaning) -->
+    <script src="https://cdn.tiny.cloud/1/922n6cw8calj0qomh8h3si5c8v0yzlw0tnxyef0cw70x3voy/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '#contentEditor',
+            plugins: 'link lists code image paste',
+            toolbar: 'undo redo | bold italic | bullist numlist | link image | code',
+            menubar: false,
+            branding: false,
+            height: 350,
+
+            paste_preprocess: function (plugin, args) {
+                args.content = args.content.replace(/\sdata-[\w-]+="[^"]*"/g, '');
+            },
+
+            setup: function (editor) {
+                editor.on('GetContent', function (e) {
+                    e.content = e.content.replace(/\sdata-[\w-]+="[^"]*"/g, '');
+                });
+            }
+        });
+    </script>
+} *@
+
+
+
+
+
+
+
+
+
+@model IEnumerable<blogapp.Models.BlogPost>
+@{
+    ViewData["Title"] = "Welcome to BlogHub";
+    var userId = ViewBag.UserId as int?;
+    var bookmarkedIds = ViewBag.BookmarkedIds as List<int> ?? new List<int>();
+    var accessStatus = ViewBag.AccessStatus as string ?? "None";
+}
+
+@section Styles {
+    <style>
+        .landing-header {
+            text-align: center;
+            margin-top: 60px;
+            margin-bottom: 40px;
+        }
+
+            .landing-header h1 {
+                font-size: 3rem;
+                font-weight: 700;
+                color: #2e2ecc;
+            }
+
+            .landing-header p {
+                font-size: 1.25rem;
+                color: #555;
+                margin-top: 10px;
+            }
+
+        .action-buttons {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+            .action-buttons a {
+                margin: 0 10px;
+                padding: 12px 24px;
+                font-size: 1.1rem;
+                border-radius: 30px;
+                font-weight: 500;
+                text-decoration: none;
+            }
+
+        .btn-primary {
+            background-color: #2e2ecc;
+            border-color: #2e2ecc;
+        }
+
+        .btn-outline-dark:hover {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .preview-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            margin-bottom: 25px;
+            transition: transform 0.2s ease-in-out;
+        }
+
+            .preview-card:hover {
+                transform: scale(1.01);
+            }
+
+            .preview-card img {
+                width: 100%;
+                height: 180px;
+                object-fit: cover;
+            }
+
+        .preview-body {
+            padding: 16px;
+        }
+
+        .preview-title {
+            font-size: 1.3rem;
+            color: #2e2ecc;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+            .preview-title:hover {
+                text-decoration: underline;
+            }
+
+        .preview-text {
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .preview-footer {
+            font-size: 0.85rem;
+            color: #777;
+            margin-top: 10px;
+        }
+
+        .write-btn-fixed {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 500;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+        }
+
+        .bg-warning {
+            background-color: #ffc107;
+        }
+
+        .bg-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .write-btn-fixed {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 500;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            color: white;
+            background-color: #2e2ecc;
+            border: none;
+        }
+
+            .write-btn-fixed:hover {
+                background-color: #1e1eb8;
+                color: white;
+            }
+
+        .access-status {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+        }
+
+        .status-pending {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .status-rejected {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+}
+
+<div class="container">
+    <!-- 🚀 Hero Section -->
+    <div class="landing-header">
+        <h1>Welcome to BlogHub ✨</h1>
+        <p>Your space to read, write, and share ideas</p>
+    </div>
+
+    <!-- 🧭 Action Buttons -->
+    <div class="action-buttons">
+        <a href="/Auth/Login" class="btn btn-outline-dark">🔐 Login</a>
+        <a href="/Auth/Register" class="btn btn-outline-dark">📝 Register</a>
+        <a href="/User/Profile" class="btn btn-primary">👤 Dashboard</a>
+        <a href="/BlogPost/Create" class="btn btn-primary">✍️ Write Blog</a>
+        <a href="/Feed/Index" class="btn btn-secondary">🏠 Return to Main Blog Feed</a>
+        @if (userId != null)
+        {
+            <a href="/User/Bookmarks" class="btn btn-outline-dark">🔖 My Bookmarks</a>
+        }
+    </div>
+
+    <!-- 📝 Latest Blog Previews -->
+    <h4 class="mb-3">Latest Posts</h4>
+    <div class="row">
+        @foreach (var post in Model.Take(3))
+        {
+            <div class="col-md-4">
+                <div class="preview-card">
+                    <a href="/BlogPost/Details/@post.Id">
+                        @if (!string.IsNullOrEmpty(post.ImagePath))
+                        {
+                            <img src="@post.ImagePath" alt="@post.Title" />
+                        }
+                        else
+                        {
+                            <img src="/images/placeholder.png" alt="No image" />
+                        }
+                    </a>
+                    <div class="preview-body">
+                        <a class="preview-title" href="/BlogPost/Details/@post.Id">@post.Title</a>
+                        <div class="preview-text">
+                            @Html.Raw((post.Content?.Length > 100 ? post.Content.Substring(0, 100) + "..." : post.Content))
+                        </div>
+                        <div class="preview-footer">
+                            Posted on @post.CreatedAt.ToString("dd MMM yyyy")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- 🔙 Return to Main Blog Feed -->
+    <div class="text-center mt-4">
+        <a href="/Feed/Index" class="btn btn-secondary">🏠 Return to Main Blog Feed</a>
+    </div>
+</div>
+
+<!-- ✍️ Fixed Write Button with Access Status -->
+@if (accessStatus == "Approved")
+{
+    <a href="/BlogPost/Create" class="write-btn-fixed btn-primary">✍️ Create Blog</a>
+}
+else if (accessStatus == "Pending")
+{
+    <div class="write-btn-fixed bg-warning text-dark">⏳ Request Pending</div>
+}
+else if (accessStatus == "Rejected")
+{
+    <div class="write-btn-fixed bg-danger text-white">❌ Request Rejected</div>
+}
+else
+{
+    <a href="/User/BecomeCreator" class="write-btn-fixed btn-primary">🚀 Become a Creator</a>
+}
+@if (accessStatus == "Approved")
+{
+    <a href="/BlogPost/Create" class="write-btn-fixed">✍️ Create Blog</a>
+}
+else if (accessStatus == "Pending")
+{
+    <div class="access-status status-pending">⏳ Request Pending</div>
+}
+else if (accessStatus == "Rejected")
+{
+    <div class="access-status status-rejected">❌ Request Rejected</div>
+}
+else if (userId != null)
+{
+    <a href="/User/BecomeCreator" class="write-btn-fixed">🚀 Become a Creator</a>
+}
+
+@section Scripts {
+    <!-- ✅ TinyMCE Setup (with Cleaning) -->
+    <script src="https://cdn.tiny.cloud/1/922n6cw8calj0qomh8h3si5c8v0yzlw0tnxyef0cw70x3voy/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '#contentEditor',
+            plugins: 'link lists code image paste',
+            toolbar: 'undo redo | bold italic | bullist numlist | link image | code',
+            menubar: false,
+            branding: false,
+            height: 350,
+
+            paste_preprocess: function (plugin, args) {
+                args.content = args.content.replace(/\sdata-[\w-]+="[^"]*"/g, '');
+            },
+
+            setup: function (editor) {
+                editor.on('GetContent', function (e) {
+                    e.content = e.content.replace(/\sdata-[\w-]+="[^"]*"/g, '');
+                });
+            }
+        });
+    </script>
+}

@@ -1,0 +1,938 @@
+﻿@* 
+
+@model blogapp.Models.User
+@{
+    ViewData["Title"] = "Login";
+
+    var floatingComments = new List<string> { "Welcome!", "🎉", "Glad to see you!", "You're awesome!" };
+    var floatingTags = new List<string> { "#Login", "#BlogHub", "#Secure" };
+    var floatingTexts = new List<string> { "Connect", "Create", "Explore" };
+}
+
+<div class="auth-container">
+    <h2 class="text-center">🔐 Login to BlogHub</h2>
+
+    <form method="post" asp-controller="Auth" asp-action="Login" class="auth-form">
+        <div class="mb-3">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="Email" aria-label="Email" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="Password" class="form-control" required />
+
+            <div class="form-check mt-2">
+                <input type="checkbox" id="togglePassword" class="form-check-input" />
+                <label for="togglePassword" class="form-check-label">Show Password</label>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+
+        @if (ViewBag.Message != null)
+        {
+            <p class="text-danger mt-2 text-center">@ViewBag.Message</p>
+        }
+    </form>
+
+    <p class="text-center mt-3">Don't have an account? <a href="/Auth/Register">Register</a></p>
+</div>
+
+<!-- Floating Background Elements -->
+<div class="floating-elements">
+    @for (int i = 0; i < floatingComments.Count; i++)
+    {
+        <div class="floating-item" style="left: @(10 + i * 20)% ; animation-delay: @(i * 2)s;">
+            <div class="floating-comment">@floatingComments[i]</div>
+        </div>
+    }
+
+    @for (int i = 0; i < floatingTags.Count; i++)
+    {
+        <div class="floating-item" style="left: @(5 + i * 30)% ; animation-delay: @(i * 3 + 1)s;">
+            <div class="floating-tag">@floatingTags[i]</div>
+        </div>
+    }
+
+    @for (int i = 0; i < floatingTexts.Count; i++)
+    {
+        <div class="floating-item" style="left: @(15 + i * 25)% ; animation-delay: @(i * 4 + 2)s;">
+            <div class="floating-text">@floatingTexts[i]</div>
+        </div>
+    }
+</div>
+
+<!-- Password Toggle Script -->
+<script>
+     const togglePassword = document.getElementById('togglePassword');
+     const passwordInput = document.getElementById('password');
+
+     togglePassword.addEventListener('change', function () {
+         passwordInput.type = this.checked ? 'text' : 'password';
+     });
+</script>
+
+
+<!-- Styling -->
+<style>
+    body {
+        background: #f2f4f8;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    .auth-container {
+        max-width: 400px;
+        margin: 80px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 10;
+    }
+
+    .auth-form label {
+        font-weight: 500;
+    }
+
+    .floating-elements {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .floating-item {
+        position: absolute;
+        top: 100%;
+        animation: floatUp 15s infinite linear;
+        font-size: 0.85rem;
+        color: #333;
+    }
+
+    .floating-comment, .floating-tag, .floating-text {
+        background: rgba(255, 255, 255, 0.85);
+        padding: 6px 12px;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        display: inline-block;
+    }
+
+    @@keyframes floatUp {
+        0% {
+            transform: translateY(100vh) rotate(0deg) scale(0.8);
+            opacity: 0;
+        }
+
+        10% {
+            opacity: 0.8;
+            transform: translateY(90vh) rotate(5deg) scale(1);
+        }
+
+        90% {
+            opacity: 0.8;
+            transform: translateY(-10vh) rotate(-5deg) scale(1);
+        }
+
+        100% {
+            transform: translateY(-20vh) rotate(0deg) scale(0.8);
+            opacity: 0;
+        }
+    }
+</style> 
+
+
+<style>
+    :root {
+        --primary-color: #6c5ce7;
+        --secondary-color: #a29bfe;
+        --accent-color: #fd79a8;
+        --text-color: #2d3436;
+        --light-text: #636e72;
+        --background-light: #f5f6fa;
+        --white: #ffffff;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text-color);
+        background: var(--background-light);
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    .login-container {
+        display: flex;
+        min-height: 100vh;
+        position: relative;
+    }
+
+    .login-background {
+        flex: 1;
+        position: relative;
+        display: none;
+    }
+
+    .background-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(108, 92, 231, 0.8);
+        z-index: 1;
+    }
+
+    .background-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 450px;
+        margin: auto;
+        padding: 2.5rem;
+        background: var(--white);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        position: relative;
+        z-index: 10;
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+        .login-header .logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+
+        .login-header h2 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+
+    .login-form {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+    .input-with-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+        .input-with-icon svg {
+            position: absolute;
+            left: 15px;
+            color: var(--light-text);
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px 12px 45px;
+        border: 1px solid #dfe6e9;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: var(--transition);
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
+    .form-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .remember-me {
+        display: flex;
+        align-items: center;
+    }
+
+        .remember-me input {
+            margin-right: 0.5rem;
+        }
+
+    .forgot-password {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+    .login-button {
+        width: 100%;
+        padding: 12px;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        margin-top: 1rem;
+    }
+
+        .login-button:hover {
+            background: #5649c0;
+            transform: translateY(-2px);
+        }
+
+    .alert-error {
+        margin-top: 1rem;
+        padding: 12px;
+        background: #ffecec;
+        color: #ff6b6b;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        text-align: center;
+    }
+
+    .login-footer {
+        text-align: center;
+        font-size: 0.9rem;
+    }
+
+        .login-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+            .login-footer a:hover {
+                text-decoration: underline;
+            }
+
+    .social-login {
+        margin-top: 2rem;
+    }
+
+        .social-login p {
+            color: var(--light-text);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+            .social-login p::before,
+            .social-login p::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                width: 30%;
+                height: 1px;
+                background: #dfe6e9;
+            }
+
+            .social-login p::before {
+                left: 0;
+            }
+
+            .social-login p::after {
+                right: 0;
+            }
+
+    .social-icons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .social-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+    }
+
+        .social-icon.google {
+            background: #f5f5f5;
+            color: #db4437;
+        }
+
+        .social-icon.facebook {
+            background: #f5f5f5;
+            color: #4267B2;
+        }
+
+        .social-icon.twitter {
+            background: #f5f5f5;
+            color: #1DA1F2;
+        }
+
+        .social-icon:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+    /* Floating elements */
+    .floating-elements {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .floating-item {
+        position: absolute;
+        top: 100%;
+        animation: floatUp 15s infinite linear;
+        font-size: 0.85rem;
+        color: #333;
+    }
+
+    .floating-comment, .floating-tag, .floating-text {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 8px 15px;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        display: inline-block;
+        backdrop-filter: blur(5px);
+    }
+
+    .floating-comment {
+        background: rgba(253, 121, 168, 0.2);
+        color: #fd79a8;
+    }
+
+    .floating-tag {
+        background: rgba(108, 92, 231, 0.2);
+        color: #6c5ce7;
+    }
+
+    .floating-text {
+        background: rgba(166, 177, 225, 0.2);
+        color: #6c5ce7;
+        font-weight: 500;
+    }
+
+    @@keyframes floatUp {
+        0% {
+            transform: translateY(100vh) rotate(0deg) scale(0.8);
+            opacity: 0;
+        }
+
+        10% {
+            opacity: 0.8;
+            transform: translateY(90vh) rotate(5deg) scale(1);
+        }
+
+        90% {
+            opacity: 0.8;
+            transform: translateY(-10vh) rotate(-5deg) scale(1);
+        }
+
+        100% {
+            transform: translateY(-20vh) rotate(0deg) scale(0.8);
+            opacity: 0;
+        }
+    }
+
+    @@media (min-width: 768px) {
+        .login-background {
+            display: block;
+        }
+
+        .login-container {
+            justify-content: flex-end;
+            padding-right: 5%;
+        }
+    }
+
+    @@media (min-width: 992px) {
+        .login-card {
+            padding: 3rem;
+        }
+    }
+
+</style>
+
+
+
+
+
+ *@
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* 
+ 
+@model blogapp.Models.User
+@{
+    ViewData["Title"] = "Login";
+
+    var floatingComments = new List<string> { "Welcome!", "🎉", "Glad to see you!", "You're awesome!" };
+    var floatingTags = new List<string> { "#Login", "#BlogHub", "#Secure" };
+    var floatingTexts = new List<string> { "Connect", "Create", "Explore" };
+}
+
+
+
+
+<div class="login-container">
+    <div class="login-background">
+        <div class="background-overlay"></div>
+        <div class="background-image" style="background-image: url('https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')"></div>
+    </div>
+
+    <div class="login-card">
+        <div class="login-header">
+            <img src="https://cdn-icons-png.flaticon.com/512/6681/6681204.png" alt="BlogHub Logo" class="logo">
+            <h2>Welcome Back to BlogHub</h2>
+            <p>Share your stories with the world</p>
+        </div>
+
+        <form method="post" asp-controller="Auth" asp-action="Login" class="login-form">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-with-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <input type="email" id="email" name="Email" class="form-control" placeholder="Enter your email" required />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-with-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    <input type="password" id="password" name="Password" class="form-control" placeholder="Enter your password" required />
+                </div>
+                <div class="form-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="togglePassword" />
+                        <label for="togglePassword">Show Password</label>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot password?</a>
+                </div>
+            </div>
+
+            <button type="submit" class="login-button">Login</button>
+
+            @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-error">
+                    @ViewBag.Message
+                </div>
+            }
+        </form>
+
+        <div class="login-footer">
+            <p>Don't have an account? <a href="/Auth/Register">Create one</a></p>
+            <div class="social-login">
+                <p>Or login with</p>
+                <div class="social-icons">
+                    <a href="#" class="social-icon google">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px">
+                            <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+                            <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+                            <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+                            <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+                        </svg>
+                    </a>
+                    <a href="#" class="social-icon facebook">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px">
+                            <path fill="#039be5" d="M24 5A19 19 0 1 0 24 43A19 19 0 1 0 24 5Z" />
+                            <path fill="#fff" d="M26.572,29.036h4.917l0.772-4.995h-5.69v-2.73c0-2.075,0.678-3.915,2.619-3.915h3.119v-4.359c-0.548-0.074-1.707-0.236-3.897-0.236c-4.573,0-7.254,2.415-7.254,7.917v3.323h-4.701v4.995h4.701v13.729C22.089,42.905,23.032,43,24,43c0.875,0,1.729-0.08,2.572-0.194V29.036z" />
+                        </svg>
+                    </a>
+                    <a href="#" class="social-icon twitter">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px">
+                            <path fill="#03A9F4" d="M42,12.429c-1.323,0.586-2.746,0.977-4.247,1.162c1.526-0.906,2.7-2.351,3.251-4.058c-1.428,0.837-3.01,1.452-4.693,1.776C34.967,9.884,33.05,9,30.926,9c-4.08,0-7.387,3.278-7.387,7.32c0,0.572,0.067,1.129,0.193,1.67c-6.138-0.308-11.582-3.226-15.224-7.654c-0.64,1.082-1,2.349-1,3.686c0,2.541,1.301,4.778,3.285,6.096c-1.211-0.037-2.351-0.374-3.349-0.914c0,0.022,0,0.055,0,0.086c0,3.551,2.547,6.508,5.923,7.181c-0.617,0.169-1.269,0.263-1.941,0.263c-0.477,0-0.942-0.054-1.392-0.135c0.94,2.902,3.667,5.023,6.898,5.086c-2.528,1.96-5.712,3.134-9.174,3.134c-0.597,0-1.183-0.034-1.761-0.104C9.268,36.786,13.152,38,17.321,38c13.585,0,21.017-11.156,21.017-20.834c0-0.317-0.01-0.633-0.025-0.945C39.763,15.197,41.013,13.905,42,12.429" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Background Elements -->
+<div class="floating-elements">
+    @for (int i = 0; i < floatingComments.Count; i++)
+    {
+        <div class="floating-item" style="left: @(10 + i * 20)% ; animation-delay: @(i * 2)s;">
+            <div class="floating-comment">@floatingComments[i]</div>
+        </div>
+    }
+
+    @for (int i = 0; i < floatingTags.Count; i++)
+    {
+        <div class="floating-item" style="left: @(5 + i * 30)% ; animation-delay: @(i * 3 + 1)s;">
+            <div class="floating-tag">@floatingTags[i]</div>
+        </div>
+    }
+
+    @for (int i = 0; i < floatingTexts.Count; i++)
+    {
+        <div class="floating-item" style="left: @(15 + i * 25)% ; animation-delay: @(i * 4 + 2)s;">
+            <div class="floating-text">@floatingTexts[i]</div>
+        </div>
+    }
+</div>
+
+<!-- Password Toggle Script -->
+<script>
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+
+    togglePassword.addEventListener('change', function () {
+        passwordInput.type = this.checked ? 'text' : 'password';
+    });
+</script>
+</html>
+
+
+
+
+ *@
+
+
+
+
+@* 
+@model blogapp.Models.User
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-lg-5 col-md-7">
+            <div class="login-card bg-dark bg-opacity-75 rounded-4 p-4 shadow-lg">
+                <div class="login-header text-center mb-4">
+                    <h2 class="text-light">Welcome Back to BlogHub</h2>
+                    <p class="text-muted">Share your stories with the world</p>
+                </div>
+
+                <form method="post" asp-controller="Auth" asp-action="Login" class="login-form">
+                    <div class="form-group mb-3">
+                        <label for="email" class="form-label text-light">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-dark text-light">
+                                <i class="fas fa-envelope"></i>
+                            </span>
+                            <input type="email" id="email" name="Email" class="form-control bg-dark text-light border-dark"
+                                   placeholder="Enter your email" required />
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="password" class="form-label text-light">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-dark text-light">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <input type="password" id="password" name="Password"
+                                   class="form-control bg-dark text-light border-dark"
+                                   placeholder="Enter your password" required />
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="togglePassword">
+                                <label class="form-check-label text-light" for="togglePassword">
+                                    Show Password
+                                </label>
+                            </div>
+                            <a href="/Auth/ForgotPassword" class="text-decoration-none text-primary">Forgot password?</a>
+                        </div>
+                        <button type="submit" class="login-button">Login</button>
+                    </div>
+
+                    @if (TempData["ResetMessage"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["ResetMessage"]
+                        </div>
+                    }
+
+
+                    @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-error">
+                    @ViewBag.Message
+                </div>
+            }
+
+                    <div class="text-center text-light mb-3">
+                        <span>Or continue with</span>
+                    </div>
+
+
+                    <div class="text-center text-light">
+                        Don't have an account?
+                        <a href="/Auth/Register" class="text-decoration-none text-primary">Create one</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Password toggle functionality
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('change', function () {
+            passwordInput.type = this.checked ? 'text' : 'password';
+        });
+
+        // Google login functionality
+        document.querySelector('.fa-google').closest('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // You would typically redirect to Google OAuth here
+            window.location.href = '/Auth/ExternalLogin?provider=Google';
+        });
+    </script>
+
+    <style>
+        .min-vh-100 {
+            min-height: 100vh;
+        }
+
+        .login-card {
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .social-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+            .social-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            }
+
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498DB, #2e2ecc);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            }
+    </style>
+} *@
+
+
+
+
+@model blogapp.Models.User
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-lg-5 col-md-7">
+            <div class="login-card bg-dark bg-opacity-75 rounded-4 p-4 shadow-lg">
+
+                <div class="login-header text-center mb-4">
+                    <h2 class="text-light">Welcome Back to BlogHub</h2>
+                    <p class="text-muted">Share your stories with the world</p>
+                </div>
+
+                <!-- 🔔 Success Message After Password Reset -->
+                @if (TempData["ResetMessage"] != null)
+                {
+                    <div class="alert alert-success text-center">
+                        @TempData["ResetMessage"]
+                    </div>
+                }
+
+                <!-- ❌ Login Error Message -->
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert alert-danger text-center">
+                        @ViewBag.Message
+                    </div>
+                }
+
+                <form method="post" asp-controller="Auth" asp-action="Login" class="login-form">
+                    <div class="form-group mb-3">
+                        <label for="email" class="form-label text-light">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-dark text-light">
+                                <i class="fas fa-envelope"></i>
+                            </span>
+                            <input type="email" id="email" name="Email" class="form-control bg-dark text-light border-dark"
+                                   placeholder="Enter your email" required />
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="password" class="form-label text-light">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-dark text-light">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <input type="password" id="password" name="Password"
+                                   class="form-control bg-dark text-light border-dark"
+                                   placeholder="Enter your password" required />
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="togglePassword">
+                                <label class="form-check-label text-light" for="togglePassword">
+                                    Show Password
+                                </label>
+                            </div>
+                            <a href="/Auth/ForgotPassword" class="text-decoration-none text-primary">Forgot password?</a>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="login-button w-100 btn btn-primary mt-3">Login</button>
+
+                    <div class="text-center text-light my-3">
+                        <span>Or continue with</span>
+                        <!-- Add social login icons here if needed -->
+                    </div>
+
+                    <div class="text-center text-light">
+                        Don't have an account?
+                        <a href="/Auth/Register" class="text-decoration-none text-primary">Create one</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Password toggle functionality
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('change', function () {
+            passwordInput.type = this.checked ? 'text' : 'password';
+        });
+
+        // Google login functionality placeholder
+        const googleBtn = document.querySelector('.fa-google');
+        if (googleBtn) {
+            googleBtn.closest('form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                window.location.href = '/Auth/ExternalLogin?provider=Google';
+            });
+        }
+    </script>
+
+    <style>
+        .min-vh-100 {
+            min-height: 100vh;
+        }
+
+        .login-card {
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498DB, #2e2ecc);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            }
+    </style>
+}

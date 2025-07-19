@@ -1,0 +1,424 @@
+﻿@* @model blogapp.Models.BlogPost
+@using System.Text.RegularExpressions
+
+@{
+    ViewData["Title"] = Model.Title;
+    string cleanedContent = Regex.Replace(Model.Content ?? "", @"\s*data-(start|end)=""[^""]*""", "", RegexOptions.IgnoreCase);
+}
+
+<!-- ✅ Styling -->
+<style>
+    :root {
+        --primary-color: #2e2ecc;
+        --card-bg: #fff;
+        --card-border: #e1e1e1;
+        --shadow-color: rgba(0, 0, 0, 0.05);
+        --text-color: #333;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding-top: 40px;
+    }
+
+    .blog-details-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px var(--shadow-color);
+        overflow: hidden;
+        padding: 30px;
+    }
+
+    .blog-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 10px;
+    }
+
+    .blog-meta {
+        font-size: 0.9rem;
+        color: #777;
+        margin-bottom: 20px;
+    }
+
+    .blog-image {
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .blog-content {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: var(--text-color);
+        margin-bottom: 20px;
+        white-space: pre-line;
+    }
+
+    .blog-tags {
+        font-size: 0.95rem;
+        color: #666;
+        margin-top: 20px;
+    }
+
+    .like-btn {
+        background: transparent;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #444;
+        margin-left: 10px;
+    }
+
+        .like-btn:disabled {
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
+    .comments-section {
+        margin-top: 40px;
+    }
+
+    .comment-box {
+        margin-top: 20px;
+    }
+
+    .comment-list li {
+        margin-bottom: 15px;
+        border-bottom: 1px dashed #ccc;
+        padding-bottom: 8px;
+    }
+
+    .comment-form textarea,
+    .comment-form input {
+        border-radius: 8px;
+    }
+
+    .comment-form .btn {
+        margin-top: 10px;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 30px;
+        text-decoration: none;
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+</style>
+
+<!-- ✅ Blog Details View -->
+<div class="container">
+    <div class="blog-details-card">
+        <h1 class="blog-title">@Model.Title</h1>
+
+        <p class="blog-meta">
+            Posted by <strong>@Model.User?.Name</strong> on @Model.CreatedAt.ToString("dd MMM yyyy")
+        </p>
+
+        @if (!string.IsNullOrEmpty(Model.ImagePath))
+        {
+            <img src="@Model.ImagePath" alt="@Model.Title" class="blog-image" />
+        }
+
+        <div class="blog-content">
+            @Html.Raw(cleanedContent)
+        </div>
+
+        <div class="blog-tags">
+            <strong>Tags:</strong> @Model.Tags
+        </div>
+
+        <!-- ✅ Like Section (non-AJAX version) -->
+        <form method="post" asp-action="Like" asp-controller="BlogPost" asp-route-id="@Model.Id" asp-route-returnUrl="@Context.Request.Path">
+            <strong>Likes:</strong> @(Model.Likes?.Count ?? 0)
+            <button class="like-btn" title="Like this post" @(ViewBag.AlreadyLiked ? "disabled" : "")>👍</button>
+        </form>
+
+        <!-- ✅ Comments Section -->
+        <div class="comments-section">
+            <hr />
+            <h4>💬 Comments</h4>
+
+            @if (Model.Comments?.Count > 0)
+            {
+                <ul class="comment-list">
+                    @foreach (var comment in Model.Comments)
+                    {
+                        <li>
+                            <strong>@comment.Author:</strong> @comment.Content <br />
+                            <small class="text-muted">@comment.CreatedAt.ToString("g")</small>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p class="text-muted">No comments yet.</p>
+            }
+            @if (!string.IsNullOrEmpty(Model.VideoPath))
+            {
+                <video controls width="100%" style="max-height: 400px; margin-top: 20px;">
+                    <source src="@Model.VideoPath" type="video/mp4" />
+                    Your browser does not support the video tag.
+                </video>
+            }
+
+
+            <!-- Add Comment Form -->
+            <div class="comment-box">
+                <form asp-action="AddComment" method="post" class="comment-form">
+                    <input type="hidden" name="postId" value="@Model.Id" />
+                    <div class="mb-2">
+                        <input type="text" name="author" class="form-control" placeholder="Your name" required />
+                    </div>
+                    <div class="mb-2">
+                        <textarea name="content" class="form-control" rows="3" placeholder="Add a comment..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">💬 Post Comment</button>
+                </form>
+            </div>
+        </div>
+
+        <a href="/Home/Index" class="back-link">← Back to Blog Feed</a>
+    </div>
+</div> *@
+
+
+
+
+
+
+
+
+@model blogapp.Models.BlogPost
+@using System.Text.RegularExpressions
+
+@{
+    ViewData["Title"] = Model.Title;
+    string cleanedContent = Regex.Replace(Model.Content ?? "", @"\s*data-(start|end)=""[^""]*""", "", RegexOptions.IgnoreCase);
+}
+
+
+<!-- ✅ Styling -->
+<style>
+    :root {
+        --primary-color: #2e2ecc;
+        --card-bg: #fff;
+        --card-border: #e1e1e1;
+        --shadow-color: rgba(0, 0, 0, 0.05);
+        --text-color: #333;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding-top: 40px;
+    }
+
+    .blog-details-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px var(--shadow-color);
+        overflow: hidden;
+        padding: 30px;
+    }
+
+    .blog-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 10px;
+    }
+
+    .blog-meta {
+        font-size: 0.9rem;
+        color: #777;
+        margin-bottom: 20px;
+    }
+
+    .blog-image {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .blog-content {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: var(--text-color);
+        margin-bottom: 20px;
+        white-space: pre-line;
+    }
+
+    .blog-tags {
+        font-size: 0.95rem;
+        color: #666;
+        margin-top: 20px;
+    }
+
+    .like-btn {
+        background: transparent;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #444;
+        margin-left: 10px;
+    }
+
+        .like-btn:disabled {
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
+    .comments-section {
+        margin-top: 40px;
+    }
+
+    .comment-box {
+        margin-top: 20px;
+    }
+
+    .comment-list li {
+        margin-bottom: 15px;
+        border-bottom: 1px dashed #ccc;
+        padding-bottom: 8px;
+    }
+
+    .comment-form textarea,
+    .comment-form input {
+        border-radius: 8px;
+    }
+
+    .comment-form .btn {
+        margin-top: 10px;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 30px;
+        text-decoration: none;
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+    .video-watch-link {
+        display: block;
+        margin-top: 10px;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #1e40af;
+        text-decoration: underline;
+    }
+
+        .video-watch-link:hover {
+            color: #0f172a;
+        }
+
+</style>
+
+<!-- ✅ Blog Details View -->
+<div class="container">
+    <div class="blog-details-card">
+        <h1 class="blog-title">@Model.Title</h1>
+
+        <p class="blog-meta">
+            Posted by <strong>@Model.User?.Name</strong> on @Model.CreatedAt.ToString("dd MMM yyyy")
+        </p>
+
+        @if (!string.IsNullOrEmpty(Model.ImagePath))
+        {
+            <img src="@Model.ImagePath" alt="@Model.Title" class="blog-image" />
+        }
+
+        <div class="blog-content">
+            @Html.Raw(cleanedContent)
+        </div>
+
+        <div class="blog-tags">
+            <strong>Tags:</strong> @Model.Tags
+        </div>
+
+        <!-- ✅ Like Section (non-AJAX version) -->
+        <form method="post" asp-action="Like" asp-controller="BlogPost" asp-route-id="@Model.Id" asp-route-returnUrl="@Context.Request.Path">
+            <strong>Likes:</strong> @(Model.Likes?.Count ?? 0)
+            <button class="like-btn" title="Like this post" @(ViewBag.AlreadyLiked ? "disabled" : "")>👍</button>
+        </form>
+
+        <!-- ✅ Video Link -->
+        @if (!string.IsNullOrEmpty(Model.VideoPath))
+        {
+            <a href="@Model.VideoPath" target="_blank" class="video-watch-link">▶️ Watch Video (opens in new tab)</a>
+        }
+
+        <!-- ✅ Comments Section -->
+        <div class="comments-section">
+            <hr />
+            <h4>💬 Comments</h4>
+
+            @if (Model.Comments?.Count > 0)
+            {
+                <ul class="comment-list">
+                    @foreach (var comment in Model.Comments)
+                    {
+                        <li>
+                            <strong>@comment.Author:</strong> @comment.Content <br />
+                            <small class="text-muted">@comment.CreatedAt.ToString("g")</small>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p class="text-muted">No comments yet.</p>
+            }
+
+            <!-- Add Comment Form -->
+            <div class="comment-box">
+                <form asp-action="AddComment" method="post" class="comment-form">
+                    <input type="hidden" name="postId" value="@Model.Id" />
+                    <div class="mb-2">
+                        <input type="text" name="author" class="form-control" placeholder="Your name" required />
+                    </div>
+                    <div class="mb-2">
+                        <textarea name="content" class="form-control" rows="3" placeholder="Add a comment..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">💬 Post Comment</button>
+                </form>
+            </div>
+        </div>
+
+        <a href="/Home/Index" class="back-link">← Back to Blog Feed</a>
+    </div>
+</div>
+
+<!-- TinyMCE CDN (Rich Text Editor) -->
+<script src="https://cdn.tiny.cloud/1/922n6cw8calj0qomh8h3si5c8v0yzlw0tnxyef0cw70x3voy/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    tinymce.init({
+        selector: 'textarea#contentEditor',
+        menubar: false,
+        plugins: 'link image lists code preview',
+        toolbar: 'undo redo | bold italic underline | bullist numlist | link image | code preview',
+        height: 300
+    });
+</script>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

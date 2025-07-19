@@ -1,0 +1,412 @@
+﻿@{
+    ViewData["Title"] = "Categories";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Optional, if you want to use the main layout
+}
+
+<!-- Your HTML content here -->
+<!-- Example: -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Blog Categories</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" />
+    <style>
+        /* Reset and Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Button Styles */
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .solid-button {
+            background-color: #643843;
+            color: white;
+            border: none;
+        }
+
+            .solid-button:hover {
+                background-color: #775860;
+            }
+
+        .outline-button {
+            background-color: transparent;
+            color: #643843;
+            border: 1px solid #643843;
+        }
+
+            .outline-button:hover {
+                background-color: rgba(100, 56, 67, 0.1);
+            }
+
+        /* Header/Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+            .navbar h1 {
+                color: #643843;
+                font-size: 24px;
+                font-weight: 700;
+            }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+            .nav-links a {
+                color: #333;
+                text-decoration: none;
+                font-weight: 500;
+                transition: color 0.3s;
+            }
+
+                .nav-links a:hover {
+                    color: #643843;
+                }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Categories Section */
+        .categories-section {
+            padding: 120px 5% 80px;
+            text-align: center;
+        }
+
+            .categories-section h1 {
+                font-size: 2.5rem;
+                color: #643843;
+                margin-bottom: 10px;
+            }
+
+            .categories-section p {
+                color: #666;
+                margin-bottom: 50px;
+            }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+            .category-card:hover {
+                transform: translateY(-10px);
+            }
+
+        .category-image-container {
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .category-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.5s ease;
+        }
+
+        .category-card:hover .category-image {
+            transform: scale(1.1);
+        }
+
+        .category-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .category-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #643843;
+        }
+
+        .category-card .button {
+            margin-top: auto;
+            align-self: center;
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .nav-links
+
+        {
+            display: none;
+        }
+
+        .mobile-menu-btn {
+            display: block;
+        }
+
+        .categories-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        }
+
+        @@media (max-width: 480px) {
+            .categories-grid
+
+        {
+            grid-template-columns: 1fr;
+        }
+
+        .categories-section {
+            padding-top: 100px;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+
+
+    <!-- Categories Section -->
+    <section class="categories-section">
+        <nav class="navbar">
+            <h1>BlogHub</h1>
+            <div class="nav-links">
+                <a href="/BlogPost/Index">Home</a>
+                <a href="/User/Dashboard">Dashboard</a>
+                <a href="/BlogPost/Create">Write</a>
+            </div>
+            <button class="mobile-menu-btn">☰</button>
+        </nav>
+        <h1>Categories</h1>
+        <p>Explore our diverse range of blog categories</p>
+
+        <div class="categories-grid">
+            <!-- Category Card 1 -->
+            <div class="category-card">
+                <div class="category-image-container">
+                    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Cooking" class="category-image">
+                </div>
+                <div class="category-content">
+                    <h3>Cooking</h3>
+                    <a href="/Category/Cooking" class="button outline-button">Explore</a>
+                </div>
+            </div>
+
+            <!-- Category Card 2 -->
+            <div class="category-card">
+                <div class="category-image-container">
+                    <img src="https://images.unsplash.com/photo-1505576399279-565b52d4ac71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Daily Life" class="category-image">
+                </div>
+                <div class="category-content">
+                    <h3>Daily Life</h3>
+                    <a href="/Category/Dailylife" class="button outline-button">Explore</a>
+                </div>
+            </div>
+
+            <!-- Category Card 3 -->
+            <div class="category-card">
+                <div class="category-image-container">
+                    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Education" class="category-image">
+                </div>
+                <div class="category-content">
+                    <h3>Education</h3>
+                    <a href="/Category/Education" class="button outline-button">Explore</a>
+                </div>
+            </div>
+
+            <!-- Category Card 4 -->
+            <div class="category-card">
+                <div class="category-image-container">
+                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Fashion" class="category-image">
+                </div>
+                <div class="category-content">
+                    <h3>Fashion</h3>
+                    <a href="/Category/Fashion" class="button outline-button">Explore</a>
+                </div>
+            </div>
+
+            <!-- Category Card 5 -->
+            <div class="category-card">
+                <div class="category-image-container">
+                    <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Movies" class="category-image">
+                </div>
+                <div class="category-content">
+                    <h3>Movies</h3>
+                    <a href="/Category/Movies" class="button outline-button">Explore</a>
+                </div>
+            </div>
+
+            <!-- Category Card 6 -->
+            <div class="category-card">
+                <div class="category-image-container">
+                    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="News" class="category-image">
+                </div>
+                <div class="category-content">
+                    <h3>News</h3>
+                    <a href="/Category/News" class="button outline-button">Explore</a>
+                </div>
+            </div>
+
+            <!-- Category Card 7 -->
+            <div class="category-card">
+                <div class="category-image-container">
+                    <img src="https://images.unsplash.com/photo-1505506874110-6a7a69069a08?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Opinion" class="category-image">
+                </div>
+                <div class="category-content">
+                    <h3>Opinion</h3>
+                    <a href="/Category/Opinion" class="button outline-button">Explore</a>
+                </div>
+            </div>
+
+            <!-- Category Card 8 -->
+            <div class="category-card">
+                <div class="category-image-container">
+                    <img src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Sports" class="category-image">
+                </div>
+                <div class="category-content">
+                    <h3>Sports</h3>
+                    <a href="/Category/Sports" class="button outline-button">Explore</a>
+                </div>
+            </div>
+
+            <!-- Category Card 9 -->
+            <div class="category-card">
+                <div class="category-image-container">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Technology" class="category-image">
+                </div>
+                <div class="category-content">
+                    <h3>Technology</h3>
+                    <a href="/Category/Technology" class="button outline-button">Explore</a>
+                </div>
+            </div>
+
+            <!-- Category Card 10 -->
+            <div class="category-card">
+                <div class="category-image-container">
+                    <img src="https://images.unsplash.com/photo-1470115636492-6d2b56f9146d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Travel" class="category-image">
+                </div>
+                <div class="category-content">
+                    <h3>Travel</h3>
+                    <a href="/Category/Travel" class="button outline-button">Explore</a>
+                </div>
+            </div>
+
+            <!-- Category Card 11 -->
+            <div class="category-card">
+                <div class="category-image-container">
+                    <img src="https://images.unsplash.com/photo-1474511320723-9a56873867b5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Wildlife" class="category-image">
+                </div>
+                <div class="category-content">
+                    <h3>Wildlife</h3>
+                    <a href="/Category/Wildlife" class="button outline-button">Explore</a>
+                </div>
+            </div>
+
+            <!-- Category Card 12 -->
+            <div class="category-card">
+                <div class="category-image-container">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Other" class="category-image">
+                </div>
+                <div class="category-content">
+                    <h3>Other</h3>
+                    <a href="/Category/Other" class="button outline-button">Explore</a>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 text-center">
+            <a href="/Home/Index" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left me-1"></i> Back to Blog Feed
+            </a>
+        </div>
+    </section>
+
+    <script>
+        // Simple mobile menu toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+          document.querySelector('.nav-links').classList.toggle('show');
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+          anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+              behavior: 'smooth'
+            });
+          });
+        });
+    </script>
+</body>
+</html>
+@* 
+<section class="categories-section">
+    <h1>Categories</h1>
+    <p>Explore our diverse range of blog categories</p>
+
+    <div class="categories-grid">
+        <!-- Example Card -->
+        <div class="category-card">
+            <div class="category-image-container">
+                <img src="https://images.unsplash.com/photo-1505506874110-6a7a69069a08" class="category-image" />
+            </div>
+            <div class="category-content">
+                <h3>Opinion</h3>
+                <a href="/Blog/Category?name=Opinion" class="button outline-button">Explore</a>
+            </div>
+        </div>
+
+        <!-- Add more cards or loop from a model later -->
+    </div>
+</section>
+
+<!-- Include your CSS in a layout or add style section --> *@

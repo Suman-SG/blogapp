@@ -1,0 +1,59 @@
+﻿
+
+
+
+
+@model blogapp.ViewModels.UserProfileViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+
+    var profileImage = Context.Session.GetString("ProfileImagePath") ?? "/images/profiles/user-icon.png";
+    var userName = Context.Session.GetString("UserName") ?? "User";
+}
+
+<div class="text-center my-4">
+    <img src="@profileImage"
+         alt="Profile"
+         class="rounded-circle border border-3 shadow-sm"
+         width="150" height="150"
+         style="object-fit: cover;" />
+    <h4 class="mt-2">Welcome, @userName</h4>
+</div>
+
+<div class="container mt-5">
+    <h2 class="mb-4"><i class="fas fa-user me-2"></i>@ViewData["Title"]</h2>
+    <a href="/User/UploadProfileImage" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-upload me-1"></i> Change Profile Picture
+    </a>
+
+
+    <form asp-action="UpdateProfile" method="post" class="mt-4">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label">Name</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">Email</label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="NewPassword" class="form-label">New Password</label>
+            <input asp-for="NewPassword" type="password" class="form-control" autocomplete="off" placeholder="Leave blank to keep current password" />
+            <span asp-validation-for="NewPassword" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="/Home/Index" class="btn btn-secondary ms-2">Back to Home</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

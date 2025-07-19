@@ -1,0 +1,204 @@
+﻿@* 
+
+
+
+
+
+
+
+
+
+
+
+@model blogapp.Models.BlogPost
+
+@{
+    ViewData["Title"] = "Edit Post";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-primary">@ViewData["Title"]</h2>
+
+    <form asp-action="Edit" asp-controller="User" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+
+        <!-- 📝 Title -->
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label"></label>
+            <input asp-for="Title" class="form-control" required />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <!-- ✍️ Content with TinyMCE -->
+        <div class="mb-3">
+            <label asp-for="Content" class="form-label"></label>
+            <textarea asp-for="Content" id="contentEditor" class="form-control" rows="10"></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+
+        <!-- 🏷️ Tags -->
+        <div class="mb-3">
+            <label asp-for="Tags" class="form-label"></label>
+            <input asp-for="Tags" class="form-control" />
+            <span asp-validation-for="Tags" class="text-danger"></span>
+        </div>
+
+        <!-- 📷 Current Image -->
+        <div class="mb-3">
+            <label class="form-label">Current Image</label><br />
+            @if (!string.IsNullOrEmpty(Model.ImagePath))
+            {
+                <img src="@Model.ImagePath" alt="Current Image" class="img-thumbnail mb-2" style="max-height: 150px;" />
+            }
+            else
+            {
+                <p class="text-muted">No image uploaded.</p>
+            }
+        </div>
+
+        <!-- 📤 Upload New Image -->
+        <div class="mb-3">
+            <label class="form-label">Upload New Image (optional)</label>
+            <input type="file" name="imageFile" class="form-control" />
+        </div>
+
+        <!-- ✅ Buttons -->
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Update Blog</button>
+            <a asp-action="MyPosts" asp-controller="User" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <!-- 🧪 Validation scripts -->
+    <partial name="_ValidationScriptsPartial" />
+
+    <!-- ✅ TinyMCE Integration using valid API key -->
+    <script src="https://cdn.tiny.cloud/1/922n6cw8calj0qomh8h3si5c8v0yzlw0tnxyef0cw70x3voy/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '#contentEditor',
+            plugins: 'link lists code image',
+            toolbar: 'undo redo | bold italic underline | bullist numlist | link image | code',
+            menubar: false,
+            branding: false,
+            height: 350,
+
+            // ✨ Clean out unwanted pasted attributes like data-* (optional client-side fallback)
+            setup: function (editor) {
+                editor.on('PastePostProcess', function (e) {
+                    e.node.innerHTML = e.node.innerHTML.replace(/\sdata-[\w-]+="[^"]*"/g, '');
+                });
+            }
+        });
+    </script>
+} *@
+
+
+
+
+
+@model blogapp.Models.BlogPost
+
+@{
+    ViewData["Title"] = "Edit Blog";
+    var categories = new List<string> { "Sports", "Movies", "Technology", "Health", "Finance", "Education" };
+}
+
+<div class="container mt-5">
+    <h2 class="text-primary">@ViewData["Title"]</h2>
+    <hr />
+
+    <form asp-action="Edit" asp-controller="User" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+
+        <!-- Title -->
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label">Title</label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <!-- Content -->
+        <div class="mb-3">
+            <label asp-for="Content" class="form-label">Content</label>
+            <textarea asp-for="Content" id="contentEditor" class="form-control" rows="10"></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+
+        <!-- Tags -->
+        <div class="mb-3">
+            <label asp-for="Tags" class="form-label">Tags</label>
+            <input asp-for="Tags" class="form-control" />
+        </div>
+
+        <!-- Category -->
+        <div class="mb-3">
+            <label asp-for="Category" class="form-label">Category</label>
+            <select asp-for="Category" class="form-select">
+                <option value="">-- Select Category --</option>
+                @foreach (var category in categories)
+                {
+                    <option value="@category" selected="@(Model.Category == category)">
+                        @category
+                    </option>
+                }
+            </select>
+        </div>
+
+        <!-- Existing Image -->
+        @if (!string.IsNullOrEmpty(Model.ImagePath))
+        {
+            <div class="mb-3">
+                <label class="form-label">Current Image:</label><br />
+                <img src="@Model.ImagePath" class="img-thumbnail" style="max-height: 150px;" />
+            </div>
+        }
+
+        <!-- Upload New Image -->
+        <div class="mb-3">
+            <label class="form-label">Change Image (optional)</label>
+            <input type="file" name="imageFile" class="form-control" accept="image/*" />
+        </div>
+
+        <!-- Existing Video -->
+        @if (!string.IsNullOrEmpty(Model.VideoPath))
+        {
+            <div class="mb-3">
+                <label class="form-label">Current Video:</label><br />
+                <video controls style="max-width: 100%;">
+                    <source src="@Model.VideoPath" type="video/mp4">
+                </video>
+            </div>
+        }
+
+        <!-- Upload New Video -->
+        <div class="mb-3">
+            <label class="form-label">Change Video (optional)</label>
+            <input type="file" name="videoFile" class="form-control" accept="video/*" />
+        </div>
+
+        <button type="submit" class="btn btn-success">💾 Save Changes</button>
+        <a asp-controller="User" asp-action="MyPosts" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.tiny.cloud/1/922n6cw8calj0qomh8h3si5c8v0yzlw0tnxyef0cw70x3voy/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '#contentEditor',
+            plugins: 'link lists image code',
+            toolbar: 'undo redo | bold italic | bullist numlist | link image | code',
+            menubar: false,
+            height: 300
+        });
+    </script>
+}
+

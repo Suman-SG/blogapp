@@ -1,0 +1,51 @@
+﻿@model List<blogapp.Models.BlogPost>
+
+@{
+    ViewData["Title"] = "Saved Bookmarks";
+    int userId = ViewBag.UserId ?? 0;
+
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4"><i class="fas fa-bookmark me-2"></i>@ViewData["Title"]</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <p class="mb-0 text-muted">You haven't bookmarked any blog posts yet.</p>
+        </div>
+    }
+    else
+    {
+        foreach (var post in Model)
+        {
+            var isLiked = post.Likes?.Any(l => l.UserId == userId) ?? false;
+
+            <div class="card mb-3 shadow-sm p-2" onclick="location.href='/BlogPost/Details/@post.Id'" style="cursor: pointer;">
+                <div class="row g-0 align-items-center">
+                    <div class="col-md-2">
+                        <img src="@(!string.IsNullOrEmpty(post.ImagePath) ? post.ImagePath : "/images/placeholder.png")"
+                             class="img-fluid rounded-start"
+                             style="height: 90px; width: 100%; object-fit: cover;" />
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body py-2">
+                            <h5 class="card-title mb-1 text-primary">@post.Title</h5>
+                            <p class="card-text small text-muted">
+                                @((post.Content?.Length > 100) ? post.Content.Substring(0, 100) + "..." : post.Content)
+                            </p>
+                            <small class="text-muted">
+                                💬 @(post.Comments?.Count ?? 0) comments •
+                                👍 @(post.Likes?.Count ?? 0) likes
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    <a href="/User/MyPosts" class="btn btn-secondary mt-3">
+        <i class="fas fa-arrow-left me-1"></i>Back to My Posts
+    </a>
+</div>

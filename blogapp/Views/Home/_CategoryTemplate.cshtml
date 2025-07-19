@@ -1,0 +1,68 @@
+﻿@model IEnumerable<blogapp.Models.BlogPost>
+
+@{
+    var category = ViewBag.Category as string ?? "Category";
+    var icon = ViewBag.CategoryIcon as string ?? "fa-folder";
+}
+
+<div class="category-header bg-gradient py-5 mb-4" style="background: linear-gradient(135deg, #4e54c8, #8f94fb);">
+    <div class="container text-center text-white">
+        <i class="fas @icon fa-3x mb-3"></i>
+        <h1 class="display-4">@category</h1>
+        <p class="lead">Discover the best @category.ToLower() content</p>
+    </div>
+</div>
+
+<div class="container">
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="fas @icon fa-4x text-muted mb-4"></i>
+            <h3 class="text-muted">No @category.ToLower() blogs available</h3>
+            <p class="text-muted">Check back later or create your own!</p>
+            <a href="/BlogPost/Create" class="btn btn-primary mt-3">
+                <i class="fas fa-plus"></i> Write a Blog
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var post in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrEmpty(post.ImagePath))
+                        {
+                            <img src="@post.ImagePath" class="card-img-top" alt="@post.Title" style="height: 180px; object-fit: cover;">
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="/BlogPost/Details/@post.Id" class="text-decoration-none">@post.Title</a>
+                            </h5>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <small class="text-muted">@post.CreatedAt.ToString("MMM dd, yyyy")</small>
+                                @if (post.IsAdminChoice)
+                                {
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="fas fa-star"></i> Featured
+                                    </span>
+                                }
+                            </div>
+                            <p class="card-text text-muted">@(post.Content.Length > 100 ? post.Content.Substring(0, 100) + "..." : post.Content)</p>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <a href="/BlogPost/Details/@post.Id" class="btn btn-sm btn-outline-primary">
+                                Read More
+                            </a>
+                            <span class="float-end">
+                                <i class="fas fa-eye text-muted me-2"></i>@post.ViewCount
+                                <i class="fas fa-comment text-muted ms-3 me-2"></i>@(post.Comments?.Count ?? 0)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

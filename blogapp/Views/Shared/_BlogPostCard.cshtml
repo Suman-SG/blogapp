@@ -1,0 +1,17 @@
+﻿@model blogapp.Models.BlogPost
+
+<div class="col-md-4 mb-4">
+    <div class="card shadow-sm h-100">
+        @if (!string.IsNullOrEmpty(Model.ImagePath))
+        {
+            <img src="@Model.ImagePath" class="card-img-top" alt="@Model.Title" style="height: 200px; object-fit: cover;" />
+        }
+
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title">@Model.Title</h5>
+            <p class="card-text text-muted">@Model.CreatedAt.ToString("dd MMM yyyy")</p>
+            <p class="card-text">@Model.Content?.Substring(0, Math.Min(100, Model.Content.Length))...</p>
+            <a href="/BlogPost/Details/@Model.Id" class="btn btn-outline-primary mt-auto">Read More</a>
+        </div>
+    </div>
+</div>
